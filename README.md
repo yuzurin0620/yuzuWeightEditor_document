@@ -1,0 +1,288 @@
+# yuzuWeightEditor
+
+<p align="center">
+  <img src="README_images/Main.png" alt="yuzuWeightEditor Main UI" width="">
+</p>
+
+[[English README](./README.en.md)]
+
+yuzuWeightEditor は、Blender 上でウェイトをスプレッドシート感覚で確認・編集するためのアドオンです。  
+Maya の SiWeightEditor に着想を得て、頂点グループの確認、数値編集、コピー&ペースト、左右対称処理、バインド補助までを 1 つのエディターにまとめています。
+
+## できること
+
+- 頂点グループのウェイトを表計算ソフトのように一覧表示して、そのまま編集
+- 選択頂点のみ表示、全表示、ビューポート選択との連動表示の切り替え
+- 3D ビューポートとの選択同期とハイライト表示
+- 不正ウェイトの検出
+- ウェイトの丸め、正規化、最大 Influence 数の調整
+- セル単位 / 頂点単位 / オブジェクト単位のコピー&ペースト
+- ウェイトのシンメトリー化
+- 未使用頂点グループの削除、不足しているボーン用頂点グループの追加
+- ボーンコレクション表示、アーマチュア表示、モディファイア表示、ウェイト表示の補助
+
+## 動作環境
+
+- Blender 4.2 LTS
+- Blender 5.0
+
+このアドオンは Blender 標準の UI だけで完結するのではなく、`PySide6` を使った別ウィンドウのエディターを開いて動作します。  
+`PySide6` が未導入の場合は、アドオンパネルから `Install PySide6` を実行してインストールできます。
+
+## インストール
+
+### 1. アドオンを配置
+
+- プリファレンス > アドオン > ディスクからインストール でインストールしてください。
+
+### 2. アドオンを有効化
+
+Blender の `Edit > Preferences > Add-ons` で `yuzuWeightEditor` を有効にします。
+
+### 3. PySide6 を導入
+<p align="left">
+  <img src="README_images/pyside.png" alt="yuzuWeightEditor Main UI" width="">
+</p>
+`PySide6 not found` と表示された場合は、3D ビューのサイドバーから次の手順を実行してください。
+
+1. `View3D > Sidebar (N) > yuzuWeight`
+2. `Install PySide6`
+3. インストール完了後、Blender を再起動
+
+## 起動方法
+
+1. `View3D > Sidebar (N) > yuzuWeight` を開く
+2. `Open Editor` を押す
+3. 必要に応じてメッシュや頂点を選択した状態で作業する
+
+## クイックスタート
+
+1. ウェイトを編集したいメッシュを選択します。
+2. `Open Editor` でエディターを開きます。
+3. メッシュオブジェクト、または頂点を選択してシートに表示します。
+4. セルを直接編集するか、下部のスライダーや入力欄で値を調整します。
+5. 必要に応じて `Normalize`、`Round`、`Limit Inf` を使って整えます。
+6. 問題のある頂点だけを確認したいときは `Show Bad` を使います。
+
+## 主な UI / ツール
+
+### スプレッドシート
+
+<p align="center">
+  <img src="README_images/cell.gif" alt="スプレッドシート操作" width="720">
+</p>
+
+- タブ : 頂点グループの種類によって All、Deform、Other で分かれています。
+- ヘッダー : 頂点グループが表示されます。右クリックで頂点グループのリネームが行え、Deform 頂点グループは対応するボーン名もリネームされます。
+- 頂点グループロック : アイコンをクリックすることで頂点グループロックをかけられます。
+- セル : ここを操作することでウェイト値を編集します。
+  - 数値入力 : 選択したセルを右クリック、または選択して数字キー入力でウェイト値入力に入ります。複数選択時は選択セルすべてに同じ数値が入ります。
+  - コピペメニュー : Shift、または Ctrl + 右クリックでコピペメニューが開きます。`VC / VP / MP / CC / CP` が選択できます。
+
+### 表示まわり
+
+<p align="left">
+  <img src="README_images/Show.png" alt="表示まわり" width="">
+</p>
+
+- `Show` : 選択頂点だけを表示します。
+- `ShowAll` : 選択オブジェクトの頂点をすべて表示します。
+- `Focus` : ビューポート選択とシート表示を同期します。
+- `Highlight` : シート上で選択した頂点を 3D ビューポートで強調表示します。
+- `View Wt` : 編集モード中もウェイトの表示を行います。
+
+<p align="center">
+  <img src="README_images/Show.gif" alt="表示まわりの動作デモ" width="720">
+</p>
+
+### ボーン / モディファイア表示
+
+<p align="left">
+  <img src="README_images/BornMod.png" alt="ボーン / モディファイア表示" width="">
+</p>
+
+- アーマチュア前面表示
+- ボーン名表示
+- `POSE / REST` 切り替え
+- ケージ表示切り替え
+- 編集モード表示切り替え
+- モディファイア表示切り替え
+- ボーンコレクション表示
+
+### 不正ウェイト検出
+
+<p align="left">
+  <img src="README_images/Validation.png" alt="不正ウェイト検出" width="  ">
+</p>
+
+- `Influence` : 影響しているボーン数をチェック
+- `Under Wt` : 合計ウェイト不足をチェック
+- `Over Wt` : 合計ウェイト超過をチェック
+- `Show Bad` : 問題のある頂点だけを抽出表示
+
+<p align="lept">
+  <img src="README_images/Validation.gif" alt="不正ウェイト検出の動作デモ" width="">
+</p>
+
+### スプレッドシート編集 / ボーンコレクション表示
+
+<p align="left">
+  <img src="README_images/EditorView.png" alt="スプレッドシート編集" width="">
+</p>
+
+- シート更新ロック : シートの表示頂点の更新をロックします。
+- 強制更新 : シートを更新します。主にロック中の更新を想定しています。
+- クリア : シートの表示をクリアします。
+- `Select` : ツールでシート上の選択をビューポートへ反映します。Shift で現在の選択頂点へ追加選択できます。
+- ボーンコレクション表示 : ボーンコレクションの表示設定をエディター上で行えます。
+
+<p align="left">
+  <img src="README_images/ValitateSettings.png" alt="スプレッドシート編集設定" width="">
+</p>
+
+- `Display Digit` : 小数点以下を何桁表示するかの設定です。
+- `Round` : 丸め処理を行います。スピンボックスで小数第何位までで丸めるかを設定します。
+- `Limit Inf` : インフルエンス数の制限を行います。スピンボックスで制限数を設定します。`0` で無制限になります。選択セルがない場合は全体が対象です。
+
+### コピペ / ミラー / 転送
+
+<p align="left">
+  <img src="README_images/CopyPaste.png" alt="コピペ / ミラー / 転送" width="">
+</p>
+
+- `VC / VP` : 頂点単位のコピー&ペーストを行います。頂点グループロック、セルロックは無視されてペーストされます。
+- `MP` : 反転命名辞書に基づいて `VC` の内容を反転ペーストします。
+<p align="left">
+  <img src="README_images/VCVPMP.gif" alt="頂点単位コピペとミラーペースト" width="720">
+</p>
+
+- `CC / CP` : セル単位のコピー&ペーストを行います。頂点グループロック、セルロックはスキップしてペーストします。
+<p align="left">
+  <img src="README_images/CCCP.gif" alt="セル単位コピペ" width="720">
+</p>
+
+- `WC / WP` : 選択メッシュ間のウェイト転送を行います。
+<p align="left">
+  <img src="README_images/WCWP.gif" alt="ウェイト転送" width="720">
+</p>
+
+- `WS` : ウェイトのシンメトリー化を行います。`右クリック`で`反転命名辞書`を開きます。
+<p align="left">
+  <img src="README_images/WS.gif" alt="ウェイト転送" width="720">
+</p>
+
+`反転命名辞書`
+<p align="left">
+  <img src="README_images/dictionary.png" alt="ウェイトハンマー / ウェイトスムース" width="">
+</p>
+
+
+### 頂点グループ / バインド
+
+<p align="left">
+  <img src="README_images/VGEdit.png" alt="頂点グループ / バインド" width="">
+</p>
+
+- 未使用頂点グループ削除 : 全ての頂点でウェイト 0 の頂点グループを削除します。
+- 不足頂点グループ追加 : 関連アーマチュアにはボーンが存在するが、頂点グループが存在しない場合にワンボタンで追加します。
+- `Bind` : 1 つのアーマチュアと 1 つ以上のメッシュオブジェクトを選択して使用可能になります。
+- `Unbind` : メッシュオブジェクトのアーマチュアモディファイアを削除し、親にアーマチュアがあれば関係も切ります。
+
+### ウェイトハンマー / ウェイトスムース
+
+<p align="left">
+  <img src="README_images/Hammer.png" alt="ウェイトハンマー / ウェイトスムース" width="">
+</p>
+
+試験的機能です。
+
+- ウェイトハンマー : シートで選択している頂点のウェイトを周囲に合わせて修正します。一部頂点のウェイトがおかしい時に有効です。
+- ウェイトスムース : シートで選択している頂点のウェイトにスムースをかけます。`右クリック`で設定が開けます。
+
+<p align="left">
+  <img src="README_images/hammer.gif" alt="ウェイトハンマーの動作デモ" width="720">
+</p>
+
+### セルロック
+
+<p align="left">
+  <img src="README_images/Locks.png" alt="セルロック" width="">
+</p>
+
+- `Lock Wt` : 選択セルをロックし、エディター上で編集不可にします。
+- `Unlock Wt` : 選択セルのロックを解除します。
+- `Clear Locks` : 選択オブジェクトのセルロックを解除します。
+
+### 数値編集
+
+<p align="left">
+  <img src="README_images/absaddnormalize.png" alt="数値編集" width="">
+</p>
+
+- 絶対値入力 : スライダーの値をセルに置き換えます。
+- 加算入力 : セルの値にスライダーの値を加算 / 減算します。
+- 率加算入力 : セルの値から率加算します。ウェイトが `0.5` でスライダーが `0.5` なら、`0.25` が加算されて `0.75` になります。
+- `Normalize` : 自動正規化ボタンです。Trueでエディター上の編集に対して自動で正規化が行われます。`右クリック`で対象を強制的に正規化します。選択セルがない場合は全体が対象になります。
+
+### プリセットボタン
+
+<p align="left">
+  <img src="README_images/preset.png" alt="数値編集プリセット" width="">
+</p>
+
+- `0.0~1.0` : よく使う数値を一発で入れられます。クリックで置き換え、`Shift` で加算、`Ctrl` で減算します。
+
+### アクティブソート / 頂点グループ検索
+
+<p align="left">
+  <img src="README_images/VGSerach.png" alt="アクティブソート / 頂点グループ検索" width="">
+</p>
+
+- アクティブソート : 複数オブジェクト選択時、アクティブオブジェクトをシートの一番上に表示します。
+- 頂点グループ検索 : 頂点グループ名で検索できます。`Filter` オンで非表示頂点グループがある際は表示切り替えが行えます。頂点グループ名をクリックすると、シート上の頂点グループの位置まで移動します。
+
+### 頂点グループソート
+
+<p align="left">
+  <img src="README_images/VGSort.png" alt="頂点グループソート" width="">
+</p>
+
+- 頂点グループ列の表示順を設定します。`Deform`、`Other` それぞれで設定できます。
+  - `Hierarchy (Deform)` : ヒエラルキー順に頂点グループをソートします。
+  - `Alphabetical` : アルファベット順に頂点グループをソートします。
+  - `List` : Blender 上のリスト順に頂点グループをソートします。
+
+#### 頂点グループ並べ替え
+
+頂点グループソートが `List` の場合のみ、頂点グループの並べ替えが行えます。並べ替え結果は Blender 側にも反映されます。中ボタンクリックでヘッダーを選択し、そのまま中ボタンドラッグで並べ替えを行います。
+
+<p align="left">
+  <img src="README_images/sort.gif" alt="頂点グループ並べ替えの動作デモ" width="720">
+</p>
+
+### 下部UI
+
+<p align="left">
+  <img src="README_images/UI.png" alt="下部UI" width="">
+</p>
+
+- ミラー編集切り替え : 編集モードでのミラー編集を切り替えます。オンだと選択頂点の反対側にある頂点も表示し、片方の編集がもう片方に反映されます。
+- `0-1 / 0-100` 表示切り替え : ウェイトを `0～1.0` の範囲で表示するか、`0～100` の範囲で表示するかを切り替えます。
+- `Col W` : 列幅を設定できます。
+- 0 ウェイト明るさ調整 : 0 ウェイトの明るさを設定します。
+
+### プリファレンス
+
+<p align="left">
+  <img src="README_images/Preference.png" alt="プリファレンス" width="">
+</p>
+
+Blender のプリファレンス上で行う設定です。
+
+- `Language Settings` : 自動にすると Blender の言語設定に合わせてエディター上の説明文やエラーメッセージなど一部言語が変更されます。手動で切り替えることも可能です。
+- `Realtime Weight Apply` : スライダーでウェイトを変更する際にリアルタイムでウェイト反映されるかの設定です。重い場合はオフにしてください。
+- `Highlight Settings` : ハイライトの設定です。
+  - `Highlight Color` : ハイライトの色を設定します。
+  - `Highlight Size` : ハイライトの大きさを設定します。
+  - `Highlight Shape` : ハイライトの形を設定します。
+  - `Highlight Limit` : ハイライトの表示数上限を設定します。
