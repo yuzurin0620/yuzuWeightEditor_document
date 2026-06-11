@@ -183,10 +183,11 @@ Pressing `WP` opens the transfer dialog, where you can fine-tune how the transfe
   <img src="README_images/TransferDialog.png" alt="Weight transfer dialog" width="">
 </p>
 
-- VG Filter: Choose which vertex groups to transfer from `All / Deform / Other / Single`. In `Single` mode you pick one target vertex group.
-- Method: Choose how weights are matched. `Topology / Nearest Vertex / Nearest Edge Vertex / Nearest Edge Interpolated / Nearest Face Vertex / Nearest Face Interpolated / Projected Face Interpolated` are supported.
-- Placement: Choose how object positions are aligned before transfer: `World` (keep positions as-is) or `BB Reposition` (reposition using the bounding box). With `BB Reposition` you can choose the basis from `Object BB / Selection BB`.
-- If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Replace Armature` / `VG Only`).
+- **Transfer dialog options**
+  - VG Filter: Choose which vertex groups to transfer from `All / Deform / Other / Single`. In `Single` mode you pick one target vertex group.
+  - Method: Choose how weights are matched. `Topology / Nearest Vertex / Nearest Edge Vertex / Nearest Edge Interpolated / Nearest Face Vertex / Nearest Face Interpolated / Projected Face Interpolated` are supported.
+  - Placement: Choose how object positions are aligned before transfer: `World` (keep positions as-is) or `BB Reposition` (reposition using the bounding box). With `BB Reposition` you can choose the basis from `Object BB / Selection BB`.
+  - Armature conflict: If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Replace Armature` / `VG Only`).
 
 - `WS`: Apply weight symmetry. `Right Click` opens the symmetry naming dictionary.
 
@@ -200,11 +201,12 @@ Pressing `WS` opens the Weight Symmetry dialog, where you can specify the symmet
   <img src="README_images/WSDialog.png" alt="Weight Symmetry dialog" width="">
 </p>
 
-- Space: Choose the coordinate space used for symmetry matching from `World / Armature / Local / Object`.
-- Groups: Choose which vertex groups to mirror from `All / Deform / Other / Active` (active group only). `Other` groups are mirrored within the same group, without L/R name flipping.
-- Pairing Method: Choose how left and right vertices are paired from `Coordinate / Topology`. With coordinate pairing, `Epsilon` adjusts the allowed tolerance.
-- Mapping / Interpolation: Fill in unpaired vertices using coordinate-based methods such as nearest matching.
-- If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Overwrite Armature` / `Mirror Only`).
+- **Weight Symmetry dialog options**
+  - Space: Choose the coordinate space used for symmetry matching from `World / Armature / Local / Object`.
+  - Groups: Choose which vertex groups to mirror from `All / Deform / Other / Active` (active group only). `Other` groups are mirrored within the same group, without L/R name flipping.
+  - Pairing Method: Choose how left and right vertices are paired from `Coordinate / Topology`. With coordinate pairing, `Epsilon` adjusts the allowed tolerance.
+  - Mapping / Interpolation: Fill in unpaired vertices using coordinate-based methods such as nearest matching.
+  - Armature conflict: If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Overwrite Armature` / `Mirror Only`).
 
 `Symmetry Naming Dictionary`
 
