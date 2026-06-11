@@ -19,7 +19,9 @@ Note: The screenshots and GIFs in this README show the Japanese UI, but the rele
 - Detect invalid weights
 - Round weights, normalize values, and limit the maximum influence count
 - Copy and paste by cell, vertex, or object
-- Apply symmetry workflows to weights
+- Transfer weights between meshes (supports several methods such as topology and nearest)
+- Apply symmetry workflows to weights (with configurable space, pairing method, and vertex-group scope)
+- Repair weights with the experimental Hammer / Smooth tools
 - Delete unused vertex groups and add missing bone vertex groups
 - Assist with bone collection visibility, armature display, modifier display, and weight display
 
@@ -56,13 +58,13 @@ If Blender shows `PySide6 not found`, follow these steps from the 3D View sideba
 ## How to Launch
 
 1. Open `View3D > Sidebar (N) > yuzuWeight`
-2. Click `Open Editor`
+2. Click `Open Weight Editor` (while the editor is open, the button changes to `Close Weight Editor`; click it again to close)
 3. Work with the relevant mesh, and select vertices when needed
 
 ## Quick Start
 
 1. Select the mesh whose weights you want to edit.
-2. Open the editor with `Open Editor`.
+2. Open the editor with `Open Weight Editor`.
 3. Select mesh objects or vertices so they appear in the sheet.
 4. Edit cells directly, or adjust values using the slider and input fields at the bottom.
 5. Use `Normalize`, `Round`, and `Limit Inf` as needed.
@@ -81,7 +83,9 @@ If Blender shows `PySide6 not found`, follow these steps from the 3D View sideba
 - Vertex Group Lock: Click the icon to lock a vertex group.
 - Cells: Edit weight values directly here.
 - Numeric Input: Right-click a selected cell, or select it and type a number key to start numeric input. When multiple cells are selected, the same value is applied to all of them.
+- Arithmetic Input: Start the input with `+`, `-`, `*`, or `/` to add, subtract, multiply, or divide the current weight value. For example, `+0.1` adds `0.1` to the current value, and `*0.5` halves it.
 - Copy/Paste Menu: Press `Shift` or `Ctrl + Right Click` to open the copy/paste menu, where you can use `VC / VP / MP / CC / CP`.
+- Pan: Middle-drag, or `Alt + Middle`-drag over the sheet to scroll (pan) the display.
 
 ### Display Controls
 
@@ -167,11 +171,22 @@ If Blender shows `PySide6 not found`, follow these steps from the 3D View sideba
   <img src="README_images/CCCP.gif" alt="Per-cell copy and paste" width="720">
 </p>
 
-- `WC / WP`: Transfer weights between selected mesh objects.
+- `WC / WP`: Transfer weights between selected mesh objects. Use `WC` to register the source meshes, then `WP` to paste onto the target meshes.
 
 <p align="left">
   <img src="README_images/WCWP.gif" alt="Weight transfer" width="720">
 </p>
+
+Pressing `WP` opens the transfer dialog, where you can fine-tune how the transfer is performed.
+
+<p align="left">
+  <img src="README_images/TransferDialog.png" alt="Weight transfer dialog" width="">
+</p>
+
+- VG Filter: Choose which vertex groups to transfer from `All / Deform / Other / Single`. In `Single` mode you pick one target vertex group.
+- Method: Choose how weights are matched. `Topology / Nearest Vertex / Nearest Edge Vertex / Nearest Edge Interpolated / Nearest Face Vertex / Nearest Face Interpolated / Projected Face Interpolated` are supported.
+- Placement: Choose how object positions are aligned before transfer: `World` (keep positions as-is) or `BB Reposition` (reposition using the bounding box). With `BB Reposition` you can choose the basis from `Object BB / Selection BB`.
+- If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Replace Armature` / `VG Only`).
 
 - `WS`: Apply weight symmetry. `Right Click` opens the symmetry naming dictionary.
 
@@ -179,11 +194,27 @@ If Blender shows `PySide6 not found`, follow these steps from the 3D View sideba
   <img src="README_images/WS.gif" alt="Weight symmetry" width="720">
 </p>
 
+Pressing `WS` opens the Weight Symmetry dialog, where you can specify the symmetry conditions. The mirror direction is determined automatically from the selected vertices.
+
+<p align="left">
+  <img src="README_images/WSDialog.png" alt="Weight Symmetry dialog" width="">
+</p>
+
+- Space: Choose the coordinate space used for symmetry matching from `World / Armature / Local / Object`.
+- Groups: Choose which vertex groups to mirror from `All / Deform / Other / Active` (active group only). `Other` groups are mirrored within the same group, without L/R name flipping.
+- Pairing Method: Choose how left and right vertices are paired from `Coordinate / Topology`. With coordinate pairing, `Epsilon` adjusts the allowed tolerance.
+- Mapping / Interpolation: Fill in unpaired vertices using coordinate-based methods such as nearest matching.
+- If a target object already uses a different Armature modifier, a dialog asks how to resolve the conflict (`Overwrite Armature` / `Mirror Only`).
+
 `Symmetry Naming Dictionary`
 
 <p align="left">
   <img src="README_images/dictionary.png" alt="Symmetry naming dictionary" width="">
 </p>
+
+- Define left-right name pairs separately for `Prefix / Middle / Suffix`. Set the `Left` and `Right` pattern on each row; rows are matched from top to bottom.
+- Use `{num}` for numbered names such as `L01 <-> R01`.
+- Use `+ Add Row` to add a rule, and `Reset` to restore the default symmetry dictionary.
 
 ### Vertex Groups / Binding
 
@@ -191,9 +222,9 @@ If Blender shows `PySide6 not found`, follow these steps from the 3D View sideba
   <img src="README_images/VGEdit.png" alt="Vertex groups and binding" width="">
 </p>
 
-- Delete Unused Vertex Groups: Deletes vertex groups whose weight is `0` on every vertex.
+- Delete Unused Vertex Groups: Deletes vertex groups whose weight is `0` on every vertex. `Right Click` targets all vertex groups regardless of the currently open tab.
 - Add Missing Vertex Groups: Adds missing vertex groups in one click when a related armature has bones but the corresponding vertex groups do not exist.
-- `Bind`: Available when one armature and one or more mesh objects are selected.
+- `Bind`: Available when one armature and one or more mesh objects are selected. Binds the selected meshes to the armature with automatic weights (Object Mode only).
 - `Unbind`: Removes the armature modifier from mesh objects and also clears armature parenting if it exists.
 
 ### Weight Hammer / Weight Smooth
@@ -210,6 +241,19 @@ This is an experimental feature.
 <p align="left">
   <img src="README_images/hammer.gif" alt="Weight Hammer demo" width="720">
 </p>
+
+The settings dialog opened with `Right Click` on Weight Smooth lets you adjust the following:
+
+<p align="left">
+  <img src="README_images/SmoothSettings.png" alt="Smooth settings dialog" width="">
+</p>
+
+- `Factor`: Set how strongly each iteration moves toward the neighbor average.
+- `Repeat`: Set how many smoothing iterations to run.
+- `Threshold`: Vertices whose difference from the neighbor average is below this value are not updated in that iteration.
+- `Obey Max Influences`: When enabled, applies the `Limit Inf` setting to deform weights after smoothing.
+
+> Note: Hammer / Smooth are available only on the All and Deform tabs.
 
 ### Cell Locks
 
@@ -259,10 +303,13 @@ This is an experimental feature.
 - `Hierarchy (Deform)`: Sort deform vertex groups by hierarchy.
 - `Alphabetical`: Sort vertex groups alphabetically.
 - `List`: Sort vertex groups according to Blender's list order.
+- The central header-sort settings let you switch the sort method and also add or delete `Other` vertex groups. Add and delete are available in the `All` or `Other` tab when an `Other` vertex group is active.
 
 #### Reordering Vertex Groups
 
 You can reorder vertex groups only when vertex-group sorting is set to `List`. The result is also reflected back into Blender. Middle-click a header to select it, then middle-drag to reorder it.
+
+> Note: Since middle-drag is used for reordering on headers, use `Alt + Middle`-drag if you want to pan the sheet there.
 
 <p align="left">
   <img src="README_images/sort.gif" alt="Vertex group reordering demo" width="720">
@@ -276,7 +323,8 @@ You can reorder vertex groups only when vertex-group sorting is set to `List`. T
 
 - Toggle Mirror Editing: Toggle mirror editing in Edit Mode. When enabled, vertices on the opposite side of the selected vertices are also shown, and editing one side affects the other side.
 - `0-1 / 0-100` Display Toggle: Switch between displaying weights in the `0~1.0` range or the `0~100` range.
-- `Col W`: Adjust column width.
+- `V/H`: Toggle the orientation of vertex group names (headers). When enabled, group names are shown horizontally and columns widen automatically.
+- `Col W`: Adjust column width (1.0x-2.5x).
 - Zero-Weight Brightness: Adjust the brightness of `0` weights.
 
 ### Preferences
