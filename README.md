@@ -339,7 +339,7 @@ Blender のプリファレンス上で行う設定です。
 
 - `Language Settings` : 自動にすると Blender の言語設定に合わせてエディター上の説明文やエラーメッセージなど一部言語が変更されます。手動で切り替えることも可能です。
 - `Realtime Weight Apply` : スライダーでウェイトを変更する際にリアルタイムでウェイト反映されるかの設定です。重い場合はオフにしてください。
-- `Editor Startup Size` : エディターの起動時のサイズを設定できます。`Use urrent Size` で現在開いているエディターサイズを反映できます。
+- `Editor Startup Size` : エディターの起動時のサイズを設定できます。`Use Current Size` で現在開いているエディターサイズを反映できます。
 - `Highlight Settings` : ハイライトの設定です。
   - `Highlight Color` : ハイライトの色を設定します。
   - `Highlight Size` : ハイライトの大きさを設定します。

@@ -286,6 +286,13 @@ The settings dialog opened with `Right Click` on Weight Smooth lets you adjust t
 
 - `0.0~1.0`: Quickly enter commonly used values. Click to replace, `Shift` to add, and `Ctrl` to subtract.
 
+### Custom Preset Buttons
+<p align="left">
+  <img src="README_images/CustomPreset_001.png" alt="Numeric editing custom presets" width="">
+</p>
+
+- `Right Click` to register up to 7 frequently used values. You can register not only plain numbers but also formulas. They are empty by default.
+
 ### Active Sort / Vertex Group Search
 
 <p align="left">
@@ -326,6 +333,7 @@ You can reorder vertex groups only when vertex-group sorting is set to `List`. T
 - Toggle Mirror Editing: Toggle mirror editing in Edit Mode. When enabled, vertices on the opposite side of the selected vertices are also shown, and editing one side affects the other side.
 - `0-1 / 0-100` Display Toggle: Switch between displaying weights in the `0~1.0` range or the `0~100` range.
 - `V/H`: Toggle the orientation of vertex group names (headers). When enabled, group names are shown horizontally and columns widen automatically.
+- `Fit`: Fit the size of vertex group headers to the length of the vertex group names.
 - `Col W`: Adjust column width (1.0x-2.5x).
 - Zero-Weight Brightness: Adjust the brightness of `0` weights.
 
@@ -339,6 +347,7 @@ These settings are configured in Blender's preferences.
 
 - `Language Settings`: When set to automatic, some editor text such as descriptions and error messages follows Blender's language setting. You can also switch it manually.
 - `Realtime Weight Apply`: Controls whether slider-based weight edits are applied in real time. Disable it if the editor feels heavy.
+- `Editor Startup Size`: Set the size of the editor when it opens. Use `Use Current Size` to apply the size of the currently open editor.
 - `Highlight Settings`: Settings for viewport highlights.
 - `Highlight Color`: Set the highlight color.
 - `Highlight Size`: Set the highlight size.
