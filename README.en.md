@@ -20,6 +20,7 @@ Note: The screenshots and GIFs in this README show the Japanese UI, but the rele
 - Round weights, normalize values, and limit the maximum influence count
 - Copy and paste by cell, vertex, or object
 - Transfer weights between meshes (supports several methods such as topology and nearest)
+- Match weights at coincident vertices or across a mesh's thickness (with surface interpolation and intermediate sidewall vertex filling)
 - Apply symmetry workflows to weights (with configurable space, pairing method, and vertex-group scope)
 - Repair weights with the experimental Hammer / Smooth tools
 - Delete unused vertex groups and add missing bone vertex groups
@@ -217,6 +218,55 @@ Pressing `WS` opens the Weight Symmetry dialog, where you can specify the symmet
 - Define left-right name pairs separately for `Prefix / Middle / Suffix`. Set the `Left` and `Right` pattern on each row; rows are matched from top to bottom.
 - Use `{num}` for numbered names such as `L01 <-> R01`.
 - Use `+ Add Row` to add a rule, and `Reset` to restore the default symmetry dictionary.
+
+### Weight Matching (Match)
+
+- `Match`: Match weights between vertices at the same position on different meshes, or between the two sides of a thick mesh.
+
+Pressing `Match` opens the Weight Matching window. You can rotate the 3D viewport while this window stays open, so you can check the correspondence before applying weights.
+
+1. Select the target vertices in Edit Mode.
+2. Choose the coincident-position (`同一座標`) or thickness (`厚み（表裏）`) tab, then click Analyze Selected Vertices (`選択頂点を解析`).
+3. Check the result counts and the colors and correspondence lines in the viewport.
+4. Choose the application method and vertex-group scope, then click Apply Weights (`確認した対応にウェイトを適用`).
+
+#### Coincident Positions
+
+<p align="left">
+  <img src="README_images/MatchCoincident.png" alt="Weight matching at coincident positions" width="">
+</p>
+
+Enter Edit Mode with multiple meshes and select vertices at the same positions. Clusters containing vertices from only one object are excluded.
+
+- Position Tolerance (World Coordinates): Set the distance within which vertices are treated as coincident. Adjust this when positions differ slightly.
+- Use Active as Source: Copy from the active object's vertex in each cluster to the other vertices. Clusters with no source vertex, or more than one source vertex, are excluded. Multiple vertices from other objects can belong to the same cluster.
+- Average All Vertices: Average the weights of all vertices in each cluster and apply the result to the entire cluster. Vertex groups are matched by name; missing groups count as a weight of `0`.
+
+#### Thickness (Two Sides)
+
+<p align="left">
+  <img src="README_images/MatchThickness.png" alt="Weight matching across mesh thickness" width="">
+</p>
+
+Select the vertices forming both surfaces and the sidewall between them on the active mesh. All vertices of each target face must be selected. Leave branch tips and protrusions unselected.
+
+- Estimate Search Distance: Automatically determine how far to search for the opposite surface. Disable this to specify Maximum Distance (World Coordinates) manually.
+- Interpolate from Faces: Interpolate weights from the opposite surface where vertices cannot be paired directly. This can also handle different subdivisions on the two sides.
+- A / B: A is shown in cyan and B in magenta. These labels do not identify the actual outside or inside. Choose `A → B / B → A / Average Both Sides` as the application method.
+- Intermediate Fill: Intermediate sidewall vertices are shown in orange. The tool calculates the weights on both surfaces first, then applies the average of the two endpoints to the intermediate vertices. Multiple segments are supported.
+- Display Settings: Flip A / B, toggle correspondence lines and see-through display, and adjust point size.
+
+> Note: A / B orientation can differ between separate classified regions. Normals should face outward from the mesh's thickness; check the correspondence lines before applying. Triangulated sidewalls, changing segment counts, or strongly rounded sidewalls may leave intermediate vertices unfilled.
+
+#### Shared Settings / Controls
+
+- Groups: Choose the vertex-group scope from `All / Deform / Other / Active`.
+- Analysis Results: Yellow indicates ambiguous or excluded vertices; gray indicates unmatched vertices. Vertices without confirmed correspondence are not direct application targets.
+- Clear Display: Clear the analysis preview. This does not undo weights already applied.
+- `F9`: Immediately after applying, use Blender's Adjust Last Operation panel to change the application method and vertex-group scope. Use `Ctrl + Z` to undo.
+- Locks / Mirror: Vertex-group locks and cell locks are ignored. Weights are not automatically normalized. When mirror editing is enabled, changes are reflected to the opposite side as with normal weight editing.
+
+> Note: Analysis uses coordinates before deformation by modifiers such as Armature. Analyze again after changing the selection, geometry, or analysis settings. Surface averaging combines each vertex's original weight with the interpolated original weight from the opposite surface equally, so differently subdivided surfaces may not have exactly identical weight distributions throughout.
 
 ### Vertex Groups / Binding
 
